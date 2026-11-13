@@ -1,0 +1,30 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Generated datasets and reports
+data/generated/
+data/ground_truth/
+
+# IDE files
+.vscode/
+.idea/
+.agents/skills/developing-with-streamlit
+.claude/skills/developing-with-streamlit
+
+# Operating system
+.DS_Store
+Thumbs.db
