@@ -94,12 +94,17 @@ def validate_database(db_path: str | Path) -> dict:
     )
 
     check(
-        "inspection_result_consistency",
-        """SELECT inspection_id, result, defective_quantity
-           FROM inspection_results
-           WHERE (result = 'PASS' AND defective_quantity != 0)
-              OR (result = 'FAIL' AND defective_quantity = 0)""",
-        "Inspection result does not match its defective quantity.",
+        "inspection_plan_sku_consistency",
+        """SELECT ir.inspection_id,
+                  po.sku AS order_sku,
+                  ip.sku AS plan_sku
+           FROM inspection_results ir
+           JOIN production_orders po
+             ON po.order_id = ir.order_id
+           JOIN inspection_plans ip
+             ON ip.plan_id = ir.plan_id
+           WHERE po.sku != ip.sku""",
+        "An inspection plan belongs to a different product than its production order.",
     )
 
     check(
