@@ -1,4 +1,4 @@
-# TraceForge AI
+﻿# TraceForge AI
 ### Manufacturing Defect Traceability & Quality Intelligence
 
 TraceForge AI is a manufacturing traceability and quality intelligence prototype designed to investigate defects across the complete production lifecycle.
@@ -35,27 +35,27 @@ TraceForge AI provides an integrated view of this information to help identify t
 
 ```text
 TraceForge-AI/
-├── app/
-│   └── dashboard.py
-├── data/
-│   ├── generated/
-│   └── ground_truth/
-├── docs/
-├── scripts/
-│   ├── generate_data.py
-│   ├── validate_data.py
-│   ├── detect_anomalies.py
-│   └── inspect_schema.py
-├── src/
-│   └── traceforge/
-│       ├── schema.sql
-│       ├── generator.py
-│       ├── validation.py
-│       └── anomaly_detector.py
-├── tests/
-│   └── test_anomaly_detector.py
-├── requirements.txt
-└── README.md
+â”œâ”€â”€ app/
+â”‚   â””â”€â”€ dashboard.py
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ generated/
+â”‚   â””â”€â”€ ground_truth/
+â”œâ”€â”€ docs/
+â”œâ”€â”€ scripts/
+â”‚   â”œâ”€â”€ generate_data.py
+â”‚   â”œâ”€â”€ validate_data.py
+â”‚   â”œâ”€â”€ detect_anomalies.py
+â”‚   â””â”€â”€ inspect_schema.py
+â”œâ”€â”€ src/
+â”‚   â””â”€â”€ traceforge/
+â”‚       â”œâ”€â”€ schema.sql
+â”‚       â”œâ”€â”€ generator.py
+â”‚       â”œâ”€â”€ validation.py
+â”‚       â””â”€â”€ anomaly_detector.py
+â”œâ”€â”€ tests/
+â”‚   â””â”€â”€ test_anomaly_detector.py
+â”œâ”€â”€ requirements.txt
+â””â”€â”€ README.md
 ```
 
 ## Installation
@@ -65,7 +65,7 @@ Requirements: Python 3.11 or compatible version and pip.
 Clone the repository:
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/KiranMasan/TraceForge-AI.git
 cd TraceForge-AI
 ```
 
@@ -175,3 +175,4 @@ Working prototype with synthetic manufacturing data, SQLite persistence, rule-ba
 ## License
 
 Add an appropriate license before public distribution.
+
