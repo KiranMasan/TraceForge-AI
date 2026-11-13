@@ -7,16 +7,16 @@ It connects inspection results to production orders, process steps, machines, co
 
 ## Problem Statement
 
-Manufacturing defects can originate from materials, suppliers, machines, or production processes. Investigating these issues requires connecting information that is often distributed across multiple records.
+Manufacturing defects can originate from materials, suppliers, machines, or production processes. Investigating these issues requires connecting information distributed across multiple records.
 
-TraceForge AI provides an integrated view of this information to help identify traceability gaps, investigate quality issues, and track corrective actions.
+TraceForge AI provides an integrated view of manufacturing data to help identify traceability gaps, investigate quality issues, validate data integrity, and track corrective actions.
 
 ## Key Features
 
 - **End-to-end traceability:** Follow defects from inspection results to production orders, process steps, machines, material lots, and suppliers.
 - **Production investigation:** Examine BOM requirements, material consumption, process history, and inspection outcomes.
 - **Supplier quality analysis:** Investigate material lots and supplier-associated quality issues.
-- **CAPA tracking:** Review corrective and preventive action status and verification history.
+- **CAPA tracking:** Review corrective and preventive action status, verification, and closure history.
 - **Data validation:** Check database integrity, material balances, BOM consumption, inspection quantities, defect relationships, and CAPA consistency.
 - **Anomaly detection:** Detect deliberately introduced traceability and data-integrity anomalies using rule-based checks.
 - **Interactive dashboard:** Explore manufacturing quality information through five Streamlit dashboard sections.
@@ -35,27 +35,30 @@ TraceForge AI provides an integrated view of this information to help identify t
 
 ```text
 TraceForge-AI/
-â”œâ”€â”€ app/
-â”‚   â””â”€â”€ dashboard.py
-â”œâ”€â”€ data/
-â”‚   â”œâ”€â”€ generated/
-â”‚   â””â”€â”€ ground_truth/
-â”œâ”€â”€ docs/
-â”œâ”€â”€ scripts/
-â”‚   â”œâ”€â”€ generate_data.py
-â”‚   â”œâ”€â”€ validate_data.py
-â”‚   â”œâ”€â”€ detect_anomalies.py
-â”‚   â””â”€â”€ inspect_schema.py
-â”œâ”€â”€ src/
-â”‚   â””â”€â”€ traceforge/
-â”‚       â”œâ”€â”€ schema.sql
-â”‚       â”œâ”€â”€ generator.py
-â”‚       â”œâ”€â”€ validation.py
-â”‚       â””â”€â”€ anomaly_detector.py
-â”œâ”€â”€ tests/
-â”‚   â””â”€â”€ test_anomaly_detector.py
-â”œâ”€â”€ requirements.txt
-â””â”€â”€ README.md
+├── app/
+│   └── dashboard.py
+├── data/
+│   ├── generated/
+│   └── ground_truth/
+├── docs/
+│   ├── architecture.md
+│   └── data_dictionary.md
+├── scripts/
+│   ├── generate_data.py
+│   ├── validate_data.py
+│   ├── detect_anomalies.py
+│   └── inspect_schema.py
+├── src/
+│   └── traceforge/
+│       ├── schema.sql
+│       ├── generator.py
+│       ├── validation.py
+│       └── anomaly_detector.py
+├── tests/
+│   ├── test_anomaly_detector.py
+│   └── test_validation.py
+├── requirements.txt
+└── README.md
 ```
 
 ## Installation
@@ -96,13 +99,15 @@ Generate the full dataset:
 python scripts/generate_data.py --scale full --seed 20261022
 ```
 
+The generator uses a fixed random seed to support reproducible synthetic dataset generation.
+
 ## Validate the Dataset
 
 ```powershell
 python scripts/validate_data.py --scale full
 ```
 
-The validation script checks data integrity and reports validation errors.
+The validation engine checks database integrity and manufacturing relationships, reporting violations with examples.
 
 ## Run Anomaly Detection
 
@@ -138,7 +143,7 @@ http://localhost:8501
 4. **Supplier Quality:** Examine supplier and material-lot quality information.
 5. **CAPA Management:** Review corrective action records and their lifecycle status.
 
-## Current Dataset
+## Full Dataset Summary
 
 The generated full dataset contains:
 
@@ -158,21 +163,31 @@ The generated full dataset contains:
 | Corrective actions | 1,158 |
 | Lifecycle events | 1,158 |
 
-The generated dataset uses a fixed random seed for reproducibility.
+## Verification Results
 
-## Current Test Results
+Latest local verification:
 
-- Automated tests: 3 passed.
-- Full dataset validation: passed with zero reported errors.
-- Synthetic anomaly fixtures: 5 of 5 detected.
+- **Automated tests:** 5 passed.
+- **Full dataset validation:** Passed with zero reported errors.
+- **Synthetic anomaly detection:** 5 of 5 injected anomaly fixtures detected.
+- **Dashboard:** All five sections manually verified.
+- **Database:** SQLite.
 
-**Evaluation note:** The anomaly detection metrics are measured against five deliberately constructed test fixtures. They demonstrate fixture coverage, not generalization performance on unseen manufacturing data.
+**Evaluation note:** Anomaly detection metrics are measured against five deliberately constructed synthetic test fixtures. They demonstrate detection coverage on these fixtures, not generalized performance on unseen manufacturing data.
+
+## Documentation
+
+- `docs/architecture.md` — System architecture and data flow.
+- `docs/data_dictionary.md` — Database tables, columns, and relationships.
 
 ## Project Status
 
-Working prototype with synthetic manufacturing data, SQLite persistence, rule-based validation, anomaly detection, and an interactive Streamlit dashboard.
+Working prototype featuring synthetic manufacturing data, SQLite persistence, rule-based validation, anomaly detection, and an interactive Streamlit dashboard.
+
+## Repository
+
+GitHub: https://github.com/KiranMasan/TraceForge-AI
 
 ## License
 
-Add an appropriate license before public distribution.
-
+No open-source license has been added yet. All rights reserved by default unless a license is subsequently added.
