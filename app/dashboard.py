@@ -10,6 +10,18 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "generated" / "full" / "traceforge.db"
 
+sys.path.insert(0, str(ROOT / "src"))
+
+from traceforge.copilot import (
+    answer_with_ollama,
+    retrieve_evidence,
+)
+
+from traceforge.capa_service import (
+    get_capa,
+    transition_capa,
+    record_verification_evidence,
+)
 st.set_page_config(
     page_title="TraceForge AI | Manufacturing Intelligence",
     page_icon="🏭",
@@ -66,6 +78,7 @@ page = st.sidebar.radio(
         "Production Investigation",
         "Supplier Quality",
         "CAPA Management",
+        "TraceForge Copilot",
     ],
 )
 
@@ -81,9 +94,6 @@ st.markdown(
 )
 
 
-# ---------------------------------------------------------
-# OVERVIEW
-# ---------------------------------------------------------
 if page == "Overview":
 
     st.header("Manufacturing Overview")
@@ -244,9 +254,6 @@ if page == "Overview":
     st.dataframe(recent, width="stretch", hide_index=True)
 
 
-# ---------------------------------------------------------
-# DEFECT TRACEABILITY
-# ---------------------------------------------------------
 elif page == "Defect Traceability":
 
     st.header("End-to-End Defect Traceability")
@@ -451,9 +458,6 @@ elif page == "Defect Traceability":
         )
 
 
-# ---------------------------------------------------------
-# PRODUCTION INVESTIGATION
-# ---------------------------------------------------------
 elif page == "Production Investigation":
 
     st.header("Production Order Investigation")
@@ -603,9 +607,6 @@ elif page == "Production Investigation":
     )
 
 
-# ---------------------------------------------------------
-# SUPPLIER QUALITY
-# ---------------------------------------------------------
 elif page == "Supplier Quality":
 
     st.header("Supplier Quality Intelligence")
@@ -705,9 +706,6 @@ elif page == "Supplier Quality":
         )
 
 
-# ---------------------------------------------------------
-# CAPA MANAGEMENT
-# ---------------------------------------------------------
 elif page == "CAPA Management":
 
     st.header("Corrective and Preventive Action Management")
@@ -815,6 +813,129 @@ elif page == "CAPA Management":
         "Workflow transitions and audit logging are handled "
         "separately by the CAPA service."
     )
+
+
+elif page == "TraceForge Copilot":
+
+    st.header("TraceForge Copilot")
+    st.write(
+        "Investigate manufacturing defects using database-grounded "
+        "evidence and locally hosted AI explanations."
+    )
+
+    st.info(
+        "Copilot retrieves evidence from the TraceForge SQLite database. "
+        "Ollama generates explanations locally."
+    )
+
+    with st.form("copilot_investigation_form"):
+
+        question = st.text_area(
+            "Investigation Question",
+            value="Investigate defect DEF-2026-000001",
+            height=100,
+            placeholder=(
+                "Example: Investigate DEF-2026-000001"
+            ),
+        )
+
+        model = st.selectbox(
+            "Local AI Model",
+            [
+                "llama3.2:3b",
+                "llama3.1:8b",
+                "llama3:8b",
+                "llama3:latest",
+                "mistral:latest",
+                "gemma:2b",
+            ],
+            index=0,
+        )
+
+        submitted = st.form_submit_button(
+            "Run Investigation",
+            type="primary",
+            width="stretch",
+        )
+
+    if submitted:
+
+        if not question.strip():
+            st.warning("Enter an investigation question.")
+
+        else:
+
+            try:
+                with st.spinner(
+                    "Retrieving manufacturing evidence..."
+                ):
+                    result = retrieve_evidence(
+                        DB_PATH,
+                        question,
+                    )
+
+                st.success("Database evidence retrieved.")
+
+                st.subheader("Investigation Overview")
+
+                a, b, c = st.columns(3)
+
+                a.metric(
+                    "Investigation Type",
+                    result["investigation_type"].replace("_", " ").title(),
+                )
+
+                b.metric(
+                    "Matched Identifiers",
+                    len(result["matched_ids"]),
+                )
+
+                c.metric(
+                    "Source References",
+                    len(result["source_references"]),
+                )
+
+                if result["matched_ids"]:
+                    st.write("**Matched IDs**")
+                    st.json(result["matched_ids"])
+
+                with st.expander(
+                    "View Retrieved Database Evidence",
+                    expanded=True,
+                ):
+                    st.json(result["evidence"])
+
+                if result["source_references"]:
+                    with st.expander("Source Record References"):
+                        st.code(
+                            "\n".join(result["source_references"])
+                        )
+
+                st.divider()
+                st.subheader("AI Investigation Report")
+
+                try:
+                    with st.spinner(
+                        f"Generating explanation with {model}..."
+                    ):
+                        answer = answer_with_ollama(
+                            result,
+                            model=model,
+                        )
+
+                    st.markdown(answer)
+
+                except Exception as exc:
+                    st.error(
+                        f"AI explanation unavailable: {exc}"
+                    )
+                    st.warning(
+                        "Database evidence was retrieved successfully. "
+                        "You can still inspect the evidence above."
+                    )
+
+            except Exception as exc:
+                st.error(f"Investigation failed: {exc}")
 
 
 st.sidebar.divider()
